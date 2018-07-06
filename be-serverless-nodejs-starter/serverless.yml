@@ -67,4 +67,6 @@ resources:
   # S3 Bucket
   - ${file(resources/s3-bucket.yml)}  
   # Cognito User Pool
-  - ${file(resources/cognito-user-pool.yml)}    
+  - ${file(resources/cognito-user-pool.yml)}
+  # Cognito Identity Pool
+  - ${file(resources/cognito-identity-pool.yml)}    
