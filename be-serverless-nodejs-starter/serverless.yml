@@ -64,3 +64,5 @@ functions:
 resources:
   # DynamoDB
   - ${file(resources/dynamodb-table.yml)}
+  # S3 Bucket
+  - ${file(resources/s3-bucket.yml)}  
