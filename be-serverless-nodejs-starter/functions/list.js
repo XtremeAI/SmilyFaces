@@ -1,25 +1,25 @@
-import * as dynamoDbLib from "./libs/dynamodb-lib";
-import { success, failure } from "./libs/response-lib";
+import * as dynamoDbLib from "../libs/dynamodb-lib";
+import { success, failure } from "../libs/response-lib";
 
 export async function main(event, context, callback) {
     // Request body is passed in as a JSON encoded string in 'event.body'
 
     const params = {
-        TableName: "notes",
+        TableName: process.env.tableName,
         // 'KeyConditionExpression' defines the condition for the query
-        // - 'userId = :userId': only return items with matching 'userId'
+        // - 'authorId = :authorId': only return items with matching 'authorId'
         //   partition key
         // 'ExpressionAttributeValues' defines the value in the condition
-        // - ':userId': defines 'userId' to be Identity Pool identity id
+        // - ':authorId': defines 'authorId' to be Identity Pool identity id
         //   of the authenticated user
-        KeyConditionExpression: "userId = :userId",
         ExpressionAttributeValues: {
-            ":userId": event.requestContext.identity.cognitoIdentityId
-        }
+            ":authorId": event.requestContext.identity.cognitoIdentityId
+        },
+        FilterExpression: "authorId = :authorId"
     };
 
     try {
-        const result = await dynamoDbLib.call("query", params);
+        const result = await dynamoDbLib.call("scan", params);
         callback(null, success(result.Items))
     } catch (e) {
         console.log(e);

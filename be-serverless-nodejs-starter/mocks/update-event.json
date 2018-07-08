@@ -1,11 +1,6 @@
 {
     "body": "{\"content\":\"bye world!\", \"attachment\":\"bw.jpg\"}",
     "pathParameters": {
-        "id": "5d486eb0-7afe-11e8-8945-e70df9fc9eda"
-    },
-    "requestContext": {
-        "identity": {
-            "cognitoIdentityId": "USER-SUB-1234"
-        }
+        "id": "5f894aa0-82d8-11e8-8ff5-8d5e9cb18b43"
     }
 }
