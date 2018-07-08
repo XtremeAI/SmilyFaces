@@ -29,3 +29,14 @@ Outputs:
   UserPoolClientId:
     Value:
       Ref: SmilyFacesCognitoUserPoolClient
+  UserPoolCompound:
+    Value:
+      Fn::Join: 
+        - ''
+        -
+          - 'cognito-idp.'
+          - ${self:provider.region}
+          - '.amazonaws.com/'
+          - Ref: SmilyFacesCognitoUserPool
+          - ':'
+          - Ref: SmilyFacesCognitoUserPoolClient

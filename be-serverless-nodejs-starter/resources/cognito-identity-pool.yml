@@ -4,7 +4,7 @@ Resources:
     Type: AWS::Cognito::IdentityPool
     Properties:
       # Generate a name based on the stage
-      IdentityPoolName: sf-${self:custom.stage}-identity-pool
+      IdentityPoolName: sf_${self:custom.stage}_identity_pool
       # Don't allow unauthenticated users
       AllowUnauthenticatedIdentities: false
       # Link to our User Pool
@@ -12,9 +12,24 @@ Resources:
         - ClientId:
             Ref: SmilyFacesCognitoUserPoolClient
           ProviderName: 
-            Fn::GetAtt: [ "SmilyFacesCognitoUserPool", "PrividerName" ]
+            Fn::GetAtt: [SmilyFacesCognitoUserPool, ProviderName]
 
-  # IAM roles
+  # transform to map with dynamic keys #
+  TransformedRoleMapping:
+    Type: Custom::TransformedRoleMapping
+    Properties:
+      ServiceToken: 
+        Fn::GetAtt: [CognitoRoleMappingTransformer, Arn]
+      Type: Token
+      AmbiguousRoleResolution: AuthenticatedRole
+      IdentityProvider: 
+        Fn::Join:
+          - ':'
+          -
+            - Fn::GetAtt: [SmilyFacesCognitoUserPool, ProviderName]
+            - Ref: SmilyFacesCognitoUserPoolClient
+  
+  # attach roles to the identity pool #
   SmilyFacesCognitoIdentityPoolRoles:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
@@ -22,8 +37,10 @@ Resources:
         Ref: SmilyFacesCognitoIdentityPool
       Roles:
         authenticated:
-          Fn::GetAtt: [CognitoAuthRole, Arn]
-
+          Fn::GetAtt: [SmilyFacesCognitoAuthRole, Arn]
+      RoleMappings: 
+          Fn::GetAtt: [TransformedRoleMapping, RoleMapping]
+    
   # IAM role used for authenticated users
   SmilyFacesCognitoAuthRole:
     Type: AWS::IAM::Role

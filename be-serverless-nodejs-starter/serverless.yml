@@ -50,22 +50,25 @@ provider:
       - dynamodb:DeleteItem
     # Restrict our IAM role permissions to
     # the specific table for the stage
-    Resource: "Fn::GetAtt": [ PhotosTable, Arn ]
+    Resource: 
+      - "Fn::GetAtt": [ PhotosTable, Arn ]
 
 functions:
   hello:
     handler: handler.hello
     events:
       - http:
-          path: hello
           method: get
+          path: hello
 
 # Create our resources with separate CloudFormation templates
 resources:
-  # DynamoDB
+#  # DynamoDB
   - ${file(resources/dynamodb-table.yml)}
   # S3 Bucket
   - ${file(resources/s3-bucket.yml)}  
+  # Cognito Identity Pool Fix
+  - ${file(resources/cognito-custom-fix.yml)}      
   # Cognito User Pool
   - ${file(resources/cognito-user-pool.yml)}
   # Cognito Identity Pool
