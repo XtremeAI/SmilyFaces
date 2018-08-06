@@ -102,6 +102,7 @@ You can find the most recent version of this guide [here](https://github.com/fac
   - [Moment.js locales are missing](#momentjs-locales-are-missing)
 - [Alternatives to Ejecting](#alternatives-to-ejecting)
 - [Something Missing?](#something-missing)
+- [Personal Comments](#personal-comments)
 
 ## Updating to New Releases
 
@@ -2442,3 +2443,163 @@ In the future, we might start automatically compiling incompatible third-party m
 ## Something Missing?
 
 If you have ideas for more “How To” recipes that should be on this page, [let us know](https://github.com/facebookincubator/create-react-app/issues) or [contribute some!](https://github.com/facebookincubator/create-react-app/edit/master/packages/react-scripts/template/README.md)
+
+## Personal comments
+
+	1. Design 
+	
+	2. Create GitHub Repo: https://github.com/XtremeAI/SmilyFaces.git
+	3. Clone to local repo: 
+	git clone https://github.com/XtremeAI/SmilyFaces.git
+	git checkout dev 
+	4. Install serverless framework:
+	npm install -g serverless
+	5. Install serverless from starter template: 
+	serverless install --url https://github.com/AnomalyInnovations/serverless-nodejs-starter --name aiaws-notes-app-api
+	6. Remove sample code: 
+	rm handler.js
+	rm tests/handler.test.js
+	7. Install node.js and aws-sdk and uuid packages: 
+	npm install
+	npm install aws-sdk --save-dev
+	npm install uuid --save
+	npm audit fix
+	8. Configure DynamoDB in dynamodb-table.yml
+	9. Configure S3 in s3-bucket.yml
+	10. Configure CognitoUP in cognito-user-pool.yml
+	11. Configure CognitoIP in cognito-identity-pool.yml 
+	12. Configure Dynamic Key Helper custom lambda resource (cognito-custom-fix.yml)
+	13. Create CRUD lambda functions (create, get, list, update, delete)
+	14. serverless deploy :
+	Serverless: Stack update finished...
+	Service Information
+	service: smilefaces-serverless-svc
+	stage: dev
+	region: us-east-1
+	stack: smilefaces-serverless-svc-dev
+	api keys:
+	  None
+	endpoints:
+	  POST - https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev/photos
+	  GET - https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev/photos/{id}
+	  GET - https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev/photos
+	  PUT - https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev/photos/{id}
+	  DELETE - https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev/photos/{id}
+	functions:
+	  create: smilefaces-serverless-svc-dev-create
+	  get: smilefaces-serverless-svc-dev-get
+	  list: smilefaces-serverless-svc-dev-list
+	  update: smilefaces-serverless-svc-dev-update
+	  delete: smilefaces-serverless-svc-dev-delete
+	
+	Stack Outputs
+	UpdateLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-dev-update:1
+	TransformedRoleMapping: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-CognitoRoleMappingTransf-1OMKKG08PHV0U
+	UserPoolCompound: cognito-idp.us-east-1.amazonaws.com/us-east-1_EP3c94rEl:63r53hr2gqfj075caq7qtq4n3t
+	ListLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-dev-list:1
+	ServerlessDeploymentBucketName: smilefaces-serverless-sv-serverlessdeploymentbuck-1l8shw8wfycu5
+	UserPoolClientId: 63r53hr2gqfj075caq7qtq4n3t
+	UserPoolId: us-east-1_EP3c94rEl
+	DeleteLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-dev-delete:1
+	CreateLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-dev-create:2
+	GetLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:159666017731:function:smilefaces-serverless-svc-dev-get:1
+	IdentityPoolId: us-east-1:c7cc0f23-d65c-4687-9b84-38f176f9b422
+	PhotosBucketName: smilefaces-serverless-svc-dev-photosbucket-yj3viijieuh9
+	ServiceEndpoint: https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev
+	
+	15. Create a test user: 
+	aws cognito-idp sign-up --region us-east-1 --client-id 63r53hr2gqfj075caq7qtq4n3t --username admin@example.com --password Passw0rd!
+	16. Verify the test user:
+	aws cognito-idp admin-confirm-sign-up --region us-east-1 --user-pool-id us-east-1_EP3c94rEl --username admin@example.com
+	
+	17. Create React app:
+	npx create-react-app fe-serverless-react-app
+	
+	18. Add custom icon (skipped)
+	19. Add custom font using fonts.google.com by adding in index.html:
+	<link href="https://fonts.googleapis.com/css?family=Gaegu|Roboto" rel="stylesheet">
+	
+	and in index.css:
+	body {
+	  font-family: "Roboto", sans-serif;
+	}
+	
+	h1,h2,h3,h4,h5,h6 {
+	  font-family: "Gaegu", serif;
+	}
+	
+	20. Setup React-Bootstrap
+	Install package: 
+		npm install react-bootstrap --save
+	Add Styles: 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		
+	Fix mobile browsers by adding to index.css: 
+		select.form-control,
+		textarea.form-control,
+		input.form-control {
+		  font-size: 16px;
+		}
+		input[type=file] {
+		  width: 100%;
+		}
+		
+	21. Setup React-Router v4
+	Install the package: 
+		npm install react-router-dom --save
+	In index.js :
+		- Add:
+		import { BrowserRouter as Router } from "react-router-dom";
+		- Embed <App /> tag in <Router> </Router> tags
+		ReactDOM.render(
+		    <Router>
+		        <App />
+		    </ Router>, 
+		    document.getElementById('root')
+		);
+	22. Setup React-Router-Bootstrap to support bootstrap Navbar with react router
+	Install: 
+		npm install react-router-bootstrap --save
+	Use like that:
+		<LinkContainer to="/signup">
+		  <NavItem>Signup</NavItem>
+		</LinkContainer>
+		
+	23. Setup AWS Amplify
+	Install: 
+		npm install aws-amplify --save
+	Create awsConfig.js with backend data
+	Configure AWS Amplify in index.js:
+		Amplify.configure({
+		    Auth: {
+		        mandatorySignIn: true,
+		        region: awsConfig.cognito.REGION,
+		        userPoolId: awsConfig.cognito.USER_POOL_ID,
+		        identityPoolId: awsConfig.cognito.IDENTITY_POOL_ID,
+		        userPoolWebClientId: awsConfig.cognito.APP_CLIENT_ID
+		    },
+		    Storage: {
+		        region: awsConfig.s3.REGION,
+		        bucket: awsConfig.s3.BUCKET,
+		        identityPoolId: awsConfig.cognito.IDENTITY_POOL_ID
+		    },
+		    API: {
+		        name: "photos",
+		        endpoint: awsConfig.apiGateway.URL,
+		        region: awsConfig.apiGateway.REGION
+		    }
+		});
+		
+	24. Call AWS methods like this: 
+		    try {
+		      await Auth.signIn(this.state.email, this.state.password);
+		      …
+		    } catch (e) {
+		      console.log(e.message);
+		    }
+		
+	
+
+	
+
+	
