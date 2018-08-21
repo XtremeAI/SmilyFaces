@@ -126,3 +126,5 @@ resources:
   - ${file(resources/cognito-user-pool.yml)}
   # Cognito Identity Pool
   - ${file(resources/cognito-identity-pool.yml)}    
+  # IAM Roles
+  - ${file(resources/iam-roles.yml)}
