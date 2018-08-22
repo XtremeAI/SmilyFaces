@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import awsConfig from './../awsConfig';
+import { Button, Thumbnail, Grid, Row, Col } from 'react-bootstrap';
 import ReactDropzone from 'react-dropzone';
 import { Storage } from 'aws-amplify';
+import awsConfig from './../awsConfig';
 
 import './Home.css';
-import { Button } from 'react-bootstrap';
 
 export default class Home extends Component {
   constructor(props) {
@@ -30,14 +30,6 @@ export default class Home extends Component {
     this.setState({
       files: acceptedFiles
     });
-    // POST to a test endpoint for demo purposes
-    // const req = request.post('https://httpbin.org/post');
-
-    // files.forEach(file => {
-    //   req.attach(file.name, file);
-    // });
-
-    // req.end();
   };
 
   uploadPhotos = async event => {
@@ -58,6 +50,10 @@ export default class Home extends Component {
     }
 
     console.log('Uploaded:', uploadedFiles);
+
+    this.setState({
+      files: []
+    });
   };
 
   render() {
@@ -66,20 +62,26 @@ export default class Home extends Component {
     if (files.length > 0) {
       previews = files.map((file, index) => {
         return (
-          <li key={index}>
-            <img src={file.preview} alt="" />
-          </li>
+          <Col xs={6} md={4} key={file.name}>
+            <Row>
+              <Thumbnail src={file.preview} alt="50x50">
+                <h5>{file.name}</h5>
+              </Thumbnail>
+            </Row>
+          </Col>
         );
       });
     }
     return this.state.isAdmin ? (
       <div>
         <div>
-          <ReactDropzone onDrop={this.onDrop}>
+          <ReactDropzone onDrop={this.onDrop} accept="image/*">
             Drop your photos here!
           </ReactDropzone>
-          <ul>{previews}</ul>
-          <Button onClick={this.uploadPhotos}>Upload photos!</Button>
+          <Button onClick={this.uploadPhotos} disabled={files.length === 0}>
+            Upload photos!
+          </Button>
+          <Grid>{previews}</Grid>
         </div>
       </div>
     ) : (

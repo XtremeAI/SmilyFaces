@@ -8,6 +8,7 @@ import { Auth } from 'aws-amplify';
 import Routes from './Routes';
 
 import './App.css';
+import Signup from './containers/Signup';
 
 class App extends Component {
   constructor(props) {
@@ -46,10 +47,14 @@ class App extends Component {
         isAuthenticated: isAuthenticated
       });
       if (currentUser) {
+        const userRoles = currentUser.signInUserSession.idToken.payload[
+          'cognito:groups'
+        ]
+          ? currentUser.signInUserSession.idToken.payload['cognito:groups']
+          : [];
         this.setState({
           userName: currentUser.attributes.email,
-          userRoles:
-            currentUser.signInUserSession.idToken.payload['cognito:groups']
+          userRoles
         });
       }
     } catch (e) {
@@ -95,6 +100,9 @@ class App extends Component {
                 <Fragment>
                   <LinkContainer to="/login">
                     <NavItem>Login</NavItem>
+                  </LinkContainer>
+                  <LinkContainer to="/signup">
+                    <NavItem>SignUp</NavItem>
                   </LinkContainer>
                 </Fragment>
               )}
