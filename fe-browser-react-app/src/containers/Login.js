@@ -31,7 +31,7 @@ export default class Login extends Component {
 
     try {
       await Auth.signIn(this.state.email, this.state.password); // returns CongnitoUser
-      this.props.userHasAuthenticated(true);
+      await this.props.userHasAuthenticated(true);
       console.log('Logged in!');
       this.props.history.push('/');
     } catch (e) {

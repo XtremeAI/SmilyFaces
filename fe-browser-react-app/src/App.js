@@ -81,6 +81,8 @@ class App extends Component {
       userRoles: this.state.userRoles
     };
 
+    const isAdmin = [...this.state.userRoles].includes('Admins');
+
     return this.state.isAuthenticating ? (
       'Loading...'
     ) : (
@@ -95,7 +97,14 @@ class App extends Component {
           <Navbar.Collapse>
             <Nav pullRight>
               {this.state.isAuthenticated ? (
-                <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                <Fragment>
+                  {isAdmin && (
+                    <LinkContainer to="/upload">
+                      <NavItem>Upload</NavItem>
+                    </LinkContainer>
+                  )}
+                  <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                </Fragment>
               ) : (
                 <Fragment>
                   <LinkContainer to="/login">

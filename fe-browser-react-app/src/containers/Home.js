@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Thumbnail, Grid, Row, Col } from 'react-bootstrap';
-import ReactDropzone from 'react-dropzone';
+import {
+  PageHeader,
+  ListGroup,
+  Grid,
+  Col,
+  Row,
+  Thumbnail
+} from 'react-bootstrap';
 import { Storage } from 'aws-amplify';
-import awsConfig from './../awsConfig';
 
 import './Home.css';
 
@@ -10,82 +15,80 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    // console.log("calling from constructor", this.props.userRoles);
-
     this.state = {
-      isAdmin: false,
-      files: []
+      isLoading: true,
+      photos: []
     };
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // console.log("calling from componentDidUpdate", this.props.userRoles);
-    if (this.props.userRoles !== prevProps.userRoles) {
-      this.setState({ isAdmin: [...this.props.userRoles].includes('Admins') });
+  async componentDidMount() {
+    if (this.props.isAuthenticated) {
+      try {
+        const response = await Storage.list('');
+        console.log(
+          `Storage::list(): Response = ${JSON.stringify(response, null, 2)}`
+        );
+        let photos = [...response].filter(f => f.key.endsWith('.jpg'));
+        photos = await Promise.all(
+          photos.map(async p => {
+            const photo = {};
+            photo.key = p.key;
+            photo.url = await Storage.get(p.key);
+            return photo;
+          })
+        );
+        this.setState({ photos });
+      } catch (e) {
+        console.log(`Storage::list(): Error = ${JSON.stringify(e, null, 2)}`);
+      }
     }
   }
 
-  onDrop = (acceptedFiles, rejectedFiles) => {
-    console.log(acceptedFiles);
-    this.setState({
-      files: acceptedFiles
-    });
-  };
+  renderLander() {
+    return (
+      <div className="Home-lander">
+        <h1>Welcome to SmilyPhotos App!</h1>
+        <p>Please Login</p>
+      </div>
+    );
+  }
 
-  uploadPhotos = async event => {
-    event.preventDefault();
+  renderPhotoThumbs(photos) {
+    return null;
+  }
 
-    const uploadedFiles = [];
-
-    for (const file of this.state.files) {
-      const filename = `${Date.now()}-${file.name}`;
-
-      const stored = await Storage.put(filename, file, {
-        contentType: file.type
-      });
-
-      uploadedFiles.push(stored.key);
-
-      window.URL.revokeObjectURL(file.preview);
-    }
-
-    console.log('Uploaded:', uploadedFiles);
-
-    this.setState({
-      files: []
-    });
-  };
-
-  render() {
-    const { files } = this.state;
+  renderPhotos() {
+    const { photos } = this.state;
     let previews = null;
-    if (files.length > 0) {
-      previews = files.map((file, index) => {
+    if (photos.length > 0) {
+      previews = photos.map((photo, index) => {
         return (
-          <Col xs={6} md={4} key={file.name}>
+          <Col xs={6} md={4} key={photo.key}>
             <Row>
-              <Thumbnail src={file.preview} alt="50x50">
-                <h5>{file.name}</h5>
+              <Thumbnail src={photo.url} alt="50x50">
+                <h5>{photo.key}</h5>
               </Thumbnail>
             </Row>
           </Col>
         );
       });
     }
-    return this.state.isAdmin ? (
-      <div>
-        <div>
-          <ReactDropzone onDrop={this.onDrop} accept="image/*">
-            Drop your photos here!
-          </ReactDropzone>
-          <Button onClick={this.uploadPhotos} disabled={files.length === 0}>
-            Upload photos!
-          </Button>
-          <Grid>{previews}</Grid>
-        </div>
+    return (
+      <div className="Home-photos">
+        <PageHeader>Your photos</PageHeader>
+        <Grid>{previews}</Grid>
+        <ListGroup>
+          {!this.state.isLoading && this.renderPhotoThumbs(this.state.photos)}
+        </ListGroup>
       </div>
-    ) : (
-      <div> Home</div>
+    );
+  }
+
+  render() {
+    return (
+      <div className="Home-container">
+        {this.props.isAuthenticated ? this.renderPhotos() : this.renderLander()}
+      </div>
     );
   }
 }

@@ -51,7 +51,13 @@ Resources:
               - Effect: 'Allow'
                 Action:
                   - 's3:*'
-                Resource: [PhotosBucket, Arn]
+                Resource: 
+                  - Fn::GetAtt: [PhotosBucket, Arn]
+                  - Fn::Join:
+                    - ''
+                    -
+                      - Fn::GetAtt: [PhotosBucket, Arn]
+                      - '/*'
 
 # Print out the Id of the User Pool that is created
 Outputs:
