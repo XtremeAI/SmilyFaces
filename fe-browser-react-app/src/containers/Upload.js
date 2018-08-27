@@ -79,7 +79,7 @@ export default class Home extends Component {
         </div>
       </div>
     ) : (
-      <div> Home</div>
+      <div> You must be an administrator to access this area! </div>
     );
   }
 }

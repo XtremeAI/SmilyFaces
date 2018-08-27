@@ -24,16 +24,18 @@ export default class Home extends Component {
   async componentDidMount() {
     if (this.props.isAuthenticated) {
       try {
-        const response = await Storage.list('');
+        const response = await Storage.vault.list('');
         console.log(
           `Storage::list(): Response = ${JSON.stringify(response, null, 2)}`
         );
-        let photos = [...response].filter(f => f.key.endsWith('.jpg'));
+        let photos = [...response].filter(f =>
+          /\.(gif|jpg|jpeg|tiff|png)$/i.test(f.key)
+        );
         photos = await Promise.all(
           photos.map(async p => {
             const photo = {};
             photo.key = p.key;
-            photo.url = await Storage.get(p.key);
+            photo.url = await Storage.vault.get(p.key);
             return photo;
           })
         );
