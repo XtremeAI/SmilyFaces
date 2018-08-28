@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Auth } from 'aws-amplify';
 import {
-  Form,
   FormGroup,
   ControlLabel,
   FormControl,

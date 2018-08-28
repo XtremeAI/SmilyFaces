@@ -1,0 +1,6 @@
+{
+    "body": "{\"userPhoto\":\"photoKey.jpg\"}",
+    "pathParameters": {
+        "id": "USER-SUB-1234"
+    }
+}

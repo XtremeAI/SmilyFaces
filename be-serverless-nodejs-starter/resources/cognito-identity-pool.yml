@@ -102,6 +102,33 @@ Resources:
                       - '$'
                       - '{cognito-identity.amazonaws.com:sub}/*'
 
+              # Allow users to list objects
+              # folder inside our S3 bucket
+              - Effect: 'Allow'
+                Action:
+                  - 's3:ListBucket'
+                Resource: 
+                  - Fn::GetAtt: [PhotosBucket, Arn]
+                Condition:
+                  StringLike:
+                    's3:prefix':
+                      - 'public/'
+                      - 'public/*'
+                      - 'protected/'
+                      - 'protected/*'
+                      - Fn::Join:
+                        - ''
+                        -
+                          - 'private/'
+                          - '$'
+                          - '{cognito-identity.amazonaws.com:sub}/'
+                      - Fn::Join:
+                        - ''
+                        -
+                          - 'private/'
+                          - '$'
+                          - '{cognito-identity.amazonaws.com:sub}/*'
+
 # Print out the Id of the Identity Pool that is created
 Outputs:
   IdentityPoolId:

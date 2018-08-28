@@ -38,7 +38,10 @@ provider:
   environment: 
     tableName: 
       #Ref: PhotosTable
-      'dev-photos'
+      '${self:custom.stage}-photos'
+    profileTableName: 
+      #Ref: PhotosTable
+      '${self:custom.stage}-sf-profiles'
   iamRoleStatements:
   - Effect: Allow
     Action:
@@ -53,8 +56,33 @@ provider:
     # the specific table for the stage
     Resource: 
       - "Fn::GetAtt": [ PhotosTable, Arn ]
+      - "Fn::GetAtt": [ ProfilesTable, Arn ]
 
 functions:
+  create-profile:
+    handler: functions/create-profile.main
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: aws_iam
+  get-profile:
+    handler: functions/get-profile.main
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  update-profile:
+    handler: functions/update-profile.main
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
   create:
   # Defines an HTTP API endpoint that calls the main function in create.js
   # - path: url path is /photos
@@ -116,7 +144,7 @@ functions:
 
 # Create our resources with separate CloudFormation templates
 resources:
-#  # DynamoDB
+  # DynamoDB
   - ${file(resources/dynamodb-table.yml)}
   # S3 Bucket
   - ${file(resources/s3-bucket.yml)}  

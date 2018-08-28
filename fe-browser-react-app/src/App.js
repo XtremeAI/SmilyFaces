@@ -8,7 +8,6 @@ import { Auth } from 'aws-amplify';
 import Routes from './Routes';
 
 import './App.css';
-import Signup from './containers/Signup';
 
 class App extends Component {
   constructor(props) {
@@ -103,6 +102,9 @@ class App extends Component {
                       <NavItem>Upload</NavItem>
                     </LinkContainer>
                   )}
+                  <LinkContainer to="/profile">
+                    <NavItem>Profile</NavItem>
+                  </LinkContainer>
                   <NavItem onClick={this.handleLogout}>Logout</NavItem>
                 </Fragment>
               ) : (

@@ -5,7 +5,7 @@ import { Storage } from 'aws-amplify';
 
 import './Upload.css';
 
-export default class Home extends Component {
+export default class Upload extends Component {
   constructor(props) {
     super(props);
 

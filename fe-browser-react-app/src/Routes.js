@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from './containers/Home';
 import Upload from './containers/Upload';
+import Profile from './containers/Profile';
 import Login from './containers/Login';
 import Signup from './containers/Signup';
 import AppliedRoute from './components/AppliedRoute';
@@ -29,6 +30,12 @@ export default ({ childProps }) => (
       path="/signup"
       exact
       component={Signup}
+      cProps={childProps}
+    />
+    <AuthenticatedRoute
+      path="/profile"
+      exact
+      component={Profile}
       cProps={childProps}
     />
     <Route component={NotFound} />

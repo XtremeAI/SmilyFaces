@@ -29,9 +29,13 @@ Amplify.configure({
     identityPoolId: awsConfig.cognito.IDENTITY_POOL_ID
   },
   API: {
-    name: 'photos',
-    endpoint: awsConfig.apiGateway.URL,
-    region: awsConfig.apiGateway.REGION
+    endpoints: [
+      {
+        name: 'smily-faces',
+        endpoint: awsConfig.apiGateway.URL,
+        region: awsConfig.apiGateway.REGION
+      }
+    ]
   }
 });
 

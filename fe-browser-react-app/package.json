@@ -30,5 +30,8 @@
     "build": "react-scripts build && react-snapshot",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.300.0"
   }
 }
