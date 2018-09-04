@@ -1,17 +1,17 @@
 const dev = {
   s3: {
     REGION: 'us-east-1',
-    BUCKET: 'smilefaces-serverless-svc-dev-photosbucket-1oniybgcieyg1'
+    BUCKET: 'smilefaces-serverless-svc-dev-photosbucket'
   },
   apiGateway: {
     REGION: 'us-east-1',
-    URL: 'https://k7a7wgcqtk.execute-api.us-east-1.amazonaws.com/dev'
+    URL: 'https://7vavuzwe13.execute-api.us-east-1.amazonaws.com/dev'
   },
   cognito: {
     REGION: 'us-east-1',
-    USER_POOL_ID: 'us-east-1_Ks2PC9PII',
-    APP_CLIENT_ID: '3sqvpe42odis2sv679poqc5f4',
-    IDENTITY_POOL_ID: 'us-east-1:1515cba6-b0d7-4c87-b196-cb1a0fb9fcf2'
+    USER_POOL_ID: 'us-east-1_JDEVKvZX3',
+    APP_CLIENT_ID: '6qg32vs2f0ogp3oomone12b2df',
+    IDENTITY_POOL_ID: 'us-east-1:2738f7fb-1eab-41f8-b31d-005dd02a0ca6'
   }
 };
 

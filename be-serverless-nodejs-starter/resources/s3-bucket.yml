@@ -2,6 +2,7 @@ Resources:
   PhotosBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: ${self:service}-${self:custom.stage}-photosbucket
       # Set the CORS policy
       CorsConfiguration:
         CorsRules:

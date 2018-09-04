@@ -119,7 +119,7 @@ export default class Profile extends Component {
 
     try {
       const stored = await Storage.vault.put(
-        `profilePhotos/${this.state.userId}.${file.name.split('.').pop()}`,
+        `profile/photo.${file.name.split('.').pop()}`,
         file,
         {
           contentType: file.type

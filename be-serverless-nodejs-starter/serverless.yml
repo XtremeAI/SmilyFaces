@@ -5,6 +5,7 @@ service: smilefaces-serverless-svc
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-plugin-existing-s3
 
 # serverless-webpack configuration
 # Enable auto-packing of external modules
@@ -52,11 +53,27 @@ provider:
       - dynamodb:PutItem
       - dynamodb:UpdateItem
       - dynamodb:DeleteItem
-    # Restrict our IAM role permissions to
-    # the specific table for the stage
     Resource: 
       - "Fn::GetAtt": [ PhotosTable, Arn ]
       - "Fn::GetAtt": [ ProfilesTable, Arn ]
+  - Effect: Allow
+    Action:
+      - s3:PutBucketNotification
+      - s3:GetObject
+    Resource: 
+      - Fn::GetAtt: [ PhotosBucket, Arn ]
+      - Fn::Join:
+        - ''
+        -
+          - Fn::GetAtt: [PhotosBucket, Arn]
+          - '/*'
+
+  - Effect: Allow
+    Action:
+      - rekognition:*
+    Resource: '*'
+
+
 
 functions:
   create-profile:
@@ -83,6 +100,22 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  
+  #s3 - Reko funcs
+  index-profile-photo:
+    handler: functions/index-profile-photo.main
+    environment:
+      collection: smily-faces-collection
+    events:
+      - existingS3:
+          # TODO: fix the hardcoded name
+          bucket: ${self:service}-${self:custom.stage}-photosbucket 
+          events: 
+            - s3:ObjectCreated:*
+          rules: 
+            - suffix: profile/photo.jpg
+
+  #Photo funcs      
   create:
   # Defines an HTTP API endpoint that calls the main function in create.js
   # - path: url path is /photos
