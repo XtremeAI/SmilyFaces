@@ -17,6 +17,8 @@ Resources:
               - POST
               - DELETE
               - HEAD
+            ExposedHeaders: 
+              - ETag
             MaxAge: 3000
 
 # Print out the name of the bucket that is created

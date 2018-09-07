@@ -1,0 +1,29 @@
+{
+    "Records":[
+        {
+            "eventVersion":"2.0",
+            "eventSource":"aws:s3",
+            "awsRegion":"us-east-1",
+            "eventTime":"2018-08-30T12:30:49.730Z",
+            "eventName":"ObjectCreated:Put",
+            "userIdentity":{"principalId":"AWS:AROAIA2KLSPTXLDNQZD44:CognitoIdentityCredentials"},
+            "requestParameters":{"sourceIPAddress":"62.218.43.152"},
+            "responseElements":{"x-amz-request-id":"58E3EF5A46C606F1","x-amz-id-2":"O8FcxvEW6nrcsg63pvgvm8uj5eG4NWWbAKcw7dH0JnQurFPmfDoSzf0JM0yiB3OVjKsz4XBiANs="},
+            "s3":{
+                "s3SchemaVersion":"1.0",
+                "configurationId":"exS3-v2--0a61ac322a60886a66eefe3653158b9d",
+                "bucket":{
+                    "name":"smilefaces-serverless-svc-dev-photosbucket",
+                    "ownerIdentity":{"principalId":"A3NR2TGVZ0MGE0"},
+                    "arn":"arn:aws:s3:::smilefaces-serverless-svc-dev-photosbucket"
+                },
+                "object":{
+                    "key":"public/uploads/1536223365429-DSC03406.jpg",
+                    "size":713028,
+                    "eTag":"40103f43a5709cc4d603e5df31020c94",
+                    "sequencer":"005B87E379A1297B25"
+                }
+            }
+        }
+    ]
+}

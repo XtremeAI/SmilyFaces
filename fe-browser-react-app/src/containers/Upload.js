@@ -34,7 +34,7 @@ export default class Upload extends Component {
 
       const stored = await Storage.put(`uploads/${filename}`, file, {
         contentType: file.type,
-        level: 'protected'
+        level: 'public'
       });
 
       uploadedFiles.push(stored.key);

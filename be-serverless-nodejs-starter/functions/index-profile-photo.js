@@ -12,7 +12,7 @@ export async function main (event, context) {
 
   const rekognition = new AWS.Rekognition();
 
-  const collection = process.env.collection;
+  const collection = process.env.collectionName;
   const keyURL = event.Records[0].s3.object.key;
   const key = decodeURIComponent(keyURL);
   const userId = key.split('/')[1]
