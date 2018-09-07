@@ -8,17 +8,15 @@ const rekognition = new AWS.Rekognition();
 const s3 = new AWS.S3();
 
 import * as dynamoDbLib from "../libs/dynamodb-lib";
-import { async } from './process-uploaded-photo';
 
 export async function main (event, context) {
 
-  // console.log (`Got the following event: ${JSON.stringify(event)}`);
+  console.log (`Got the following event: ${JSON.stringify(event)}`);
 
   const collection = process.env.collectionName;
   const keyURL = event.Records[0].s3.object.key;
   const bucket = event.Records[0].s3.bucket.name
   const key = decodeURIComponent(keyURL);
-  const userId = key.split('/')[1]
 
   let tags = [];
 
@@ -166,34 +164,56 @@ export async function main (event, context) {
   
         console.log(JSON.stringify(responseCopyObject));
 
-        const paramsDb = {
-          TableName: process.env.tableName,
-          Item: {
-            photoId: newPhotoId,
-            s3Key: newPhotoKey,
-            tags: tags,
-            createdAt: Date.now()
-          }
-        };
-      
+        // Save thumb
+        const thumbPhoto = await Sharp(photoData)
+        .resize(50,50)
+        .max()
+        .toBuffer();
+        const thumbKey = `public/processed/thumbs/thumb-${newPhotoId}.${key.split('.').pop()}`;
+
         try {
-          await dynamoDbLib.call("put", paramsDb);
-          console.log(`All done. Recorded photoId: ${newPhotoId}`);
+          const responsePutObject = await s3.putObject({
+            Body: thumbPhoto, 
+            Bucket: bucket, 
+            ContentType: photoObj.ContentType,
+            Key: thumbKey
+          }).promise();
 
-          const paramsDelete = {
-            Bucket: bucket,
-            Key: key
+          console.log(`OK, we create a thumbnail of our photo in '${thumbKey}' and received this response:`);
+          console.log(JSON.stringify(responsePutObject));
+
+          const paramsDb = {
+            TableName: process.env.tableName,
+            Item: {
+              photoId: newPhotoId,
+              photoKey: newPhotoKey,
+              thumbKey: thumbKey,
+              tags: tags,
+              createdAt: Date.now()
+            }
           };
-
+        
           try {
-            const responseDeleteObject = await s3.deleteObject(paramsDelete).promise();
-            console.log(`OK, we deleted our uploaded photo '${key}' and received this response:`);
-            console.log(JSON.stringify(responseDeleteObject));
-          } catch (e) {
-            console.log(`Error while deleteObject: ${e} `);
+            await dynamoDbLib.call("put", paramsDb);
+            console.log(`All done. Recorded photoId: ${newPhotoId}`);
+  
+            const paramsDelete = {
+              Bucket: bucket,
+              Key: key
+            };
+  
+            try {
+              const responseDeleteObject = await s3.deleteObject(paramsDelete).promise();
+              console.log(`OK, we deleted our uploaded photo '${key}' and received this response:`);
+              console.log(JSON.stringify(responseDeleteObject));
+            } catch (e) {
+              console.log(`Error while deleteObject: ${e} `);
+            }
+          } catch(e) {
+            console.log(`Error while creatingDbRecord: ${JSON.stringify(e)}`);
           }
-        } catch(e) {
-          console.log(`Error while creatingDbRecord: ${JSON.stringify(e)}`);
+        } catch (e) {
+          console.log(`Error while putObject: ${e} `);
         }
       } catch (e) {
         console.log(`Error while copyObject: ${e} `);
