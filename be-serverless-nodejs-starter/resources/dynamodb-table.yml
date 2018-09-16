@@ -1,32 +1,35 @@
 Resources:
-  PhotosTable:
+  SmilyFacesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       #Generate a name based on the stage
-      TableName: ${self:custom.stage}-photos
-      AttributeDefinitions:
-        - AttributeName: photoId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: photoId
-          KeyType: HASH
-      # Set the capacity based on the stage
-      ProvisionedThroughput:
-        ReadCapacityUnits: ${self:custom.tableThroughput}
-        WriteCapacityUnits: ${self:custom.tableThroughput}
-
-  ProfilesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      #Generate a name based on the stage
-      TableName: ${self:custom.stage}-sf-profiles
+      TableName: ${self:custom.tableName}
       AttributeDefinitions:
         - AttributeName: userId
+          AttributeType: S
+        - AttributeName: photoId
           AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: photoId
+          KeyType: RANGE
       # Set the capacity based on the stage
       ProvisionedThroughput:
         ReadCapacityUnits: ${self:custom.tableThroughput}
         WriteCapacityUnits: ${self:custom.tableThroughput}
+      GlobalSecondaryIndexes:
+        - IndexName: photoIdUserId
+          KeySchema:
+            - AttributeName: photoId
+              KeyType: HASH
+            - AttributeName: userId
+              KeyType: RANGE
+          Projection: 
+            NonKeyAttributes: 
+              - dateUpload
+              - dateTaken
+            ProjectionType: INCLUDE
+          ProvisionedThroughput:
+            ReadCapacityUnits: ${self:custom.tableThroughput}
+            WriteCapacityUnits: ${self:custom.tableThroughput}

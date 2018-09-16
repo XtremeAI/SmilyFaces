@@ -166,7 +166,7 @@ export async function main (event, context) {
 
         // Save thumb
         const thumbPhoto = await Sharp(photoData)
-        .resize(50,50)
+        .resize(200,200)
         .max()
         .toBuffer();
         const thumbKey = `public/processed/thumbs/thumb-${newPhotoId}.${key.split('.').pop()}`;

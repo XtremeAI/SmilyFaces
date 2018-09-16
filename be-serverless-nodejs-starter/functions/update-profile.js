@@ -7,11 +7,12 @@ export async function main(event, context, callback) {
     const data = JSON.parse(event.body);
 
     const params = {
-        TableName: process.env.profileTableName,
+        TableName: process.env.tableName,
         // 'Key' defines the partition key and sort key of the item to be updated
         // - 'photoId': path parameter
         Key: {
-            userId: event.pathParameters.id
+            userId: event.requestContext.identity.cognitoIdentityId,
+            photoId: 'Profile'
         },
         // 'UpdateExpression' defines the attributes to be updated
         // 'ExpressionAttributeValues' defines the value in the update expression

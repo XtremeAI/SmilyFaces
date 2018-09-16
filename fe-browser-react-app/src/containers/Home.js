@@ -7,7 +7,7 @@ import {
   Row,
   Thumbnail
 } from 'react-bootstrap';
-import { Storage } from 'aws-amplify';
+import { API, Storage } from 'aws-amplify';
 
 import './Home.css';
 
@@ -24,22 +24,22 @@ export default class Home extends Component {
   async componentDidMount() {
     if (this.props.isAuthenticated) {
       try {
-        const response = await Storage.vault.list('');
+        const responseList = await API.get('smily-faces', `/photos`);
         console.log(
-          `Storage::list(): Response = ${JSON.stringify(response, null, 2)}`
+          `Storage::list(): Response = ${JSON.stringify(responseList, null, 2)}`
         );
-        let photos = [...response].filter(f =>
-          /\.(gif|jpg|jpeg|tiff|png)$/i.test(f.key)
-        );
-        photos = await Promise.all(
-          photos.map(async p => {
-            const photo = {};
-            photo.key = p.key;
-            photo.url = await Storage.vault.get(p.key);
-            return photo;
-          })
-        );
-        this.setState({ photos });
+        // let photos = [...responseList].filter(f =>
+        //   /\.(gif|jpg|jpeg|tiff|png)$/i.test(f.key)
+        // );
+        // photos = await Promise.all(
+        //   photos.map(async p => {
+        //     const photo = {};
+        //     photo.key = p.key;
+        //     photo.url = await Storage.vault.get(p.key);
+        //     return photo;
+        //   })
+        // );
+        // this.setState({ photos });
       } catch (e) {
         console.log(`Storage::list(): Error = ${JSON.stringify(e, null, 2)}`);
       }

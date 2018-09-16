@@ -64,12 +64,13 @@ export async function main (event, context) {
     const faceId = indexFacesResponse.FaceRecords[0].Face.FaceId;
 
     const paramsDb = {
-      TableName: process.env.profileTableName,
+      TableName: process.env.tableName,
       // 'Key' defines the partition key and sort key of the item to be updated
       // - 'photoId': path parameter
       Key: {
-          userId: userId
-      },
+          userId: userId,
+          photoId: 'Profile'
+        },
       // 'UpdateExpression' defines the attributes to be updated
       // 'ExpressionAttributeValues' defines the value in the update expression
       UpdateExpression: "SET userFaceId = :userFaceId",

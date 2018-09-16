@@ -18,10 +18,12 @@ custom:
     prod: 5
     default: 1
   tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
+  tableName: '${self:custom.stage}-smilyFaces'
   # Load our webpack config
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+    packager: 'yarn'
 
 provider:
   name: aws
@@ -40,11 +42,8 @@ provider:
     collectionName: 
       '${self:custom.stage}-sf-collection'
     tableName: 
-      #Ref: PhotosTable
-      '${self:custom.stage}-photos'
-    profileTableName: 
-      #Ref: PhotosTable
-      '${self:custom.stage}-sf-profiles'
+      #Ref: SmilyFacesTable
+      ${self:custom.tableName}
   iamRoleStatements:
   - Effect: Allow
     Action:
@@ -56,8 +55,7 @@ provider:
       - dynamodb:UpdateItem
       - dynamodb:DeleteItem
     Resource: 
-      - "Fn::GetAtt": [ PhotosTable, Arn ]
-      - "Fn::GetAtt": [ ProfilesTable, Arn ]
+      - "Fn::GetAtt": [ SmilyFacesTable, Arn ]
   - Effect: Allow
     Action:
       - s3:PutBucketNotification
@@ -84,7 +82,7 @@ functions:
     handler: functions/create-profile.main
     events:
       - http:
-          path: users
+          path: profile
           method: post
           cors: true
           authorizer: aws_iam
@@ -92,7 +90,7 @@ functions:
     handler: functions/get-profile.main
     events:
       - http:
-          path: users/{id}
+          path: profile
           method: get
           cors: true
           authorizer: aws_iam
@@ -100,7 +98,7 @@ functions:
     handler: functions/update-profile.main
     events:
       - http:
-          path: users/{id}
+          path: profile
           method: put
           cors: true
           authorizer: aws_iam

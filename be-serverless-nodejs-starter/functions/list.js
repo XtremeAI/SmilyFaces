@@ -12,14 +12,14 @@ export async function main(event, context, callback) {
         // 'ExpressionAttributeValues' defines the value in the condition
         // - ':authorId': defines 'authorId' to be Identity Pool identity id
         //   of the authenticated user
+        KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues: {
-            ":authorId": event.requestContext.identity.cognitoIdentityId
-        },
-        FilterExpression: "authorId = :authorId"
+            ":userId": event.requestContext.identity.cognitoIdentityId
+        }
     };
 
     try {
-        const result = await dynamoDbLib.call("scan", params);
+        const result = await dynamoDbLib.call("query", params);
         callback(null, success(result.Items))
     } catch (e) {
         console.log(e);

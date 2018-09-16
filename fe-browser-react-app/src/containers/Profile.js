@@ -32,7 +32,7 @@ export default class Profile extends Component {
             userId
           });
           try {
-            const profile = await API.get('smily-faces', `/users/${userId}`);
+            const profile = await API.get('smily-faces', `/profile`);
             console.log(`Response: ${JSON.stringify(profile, null, 2)}`);
             this.setState({
               profile
@@ -54,7 +54,7 @@ export default class Profile extends Component {
             }
           } catch (e) {
             console.log(
-              `Error in API.get('smily-faces','/users/userId'): ${JSON.stringify(
+              `Error in API.get('smily-faces','/profile'): ${JSON.stringify(
                 e.response.data,
                 null,
                 2
@@ -86,7 +86,7 @@ export default class Profile extends Component {
     let profile = null;
 
     try {
-      const response = API.post('smily-faces', `/users`, {
+      const response = API.post('smily-faces', `/profile`, {
         body: { createOnSignUp: true }
       });
       console.log(`Response: ${JSON.stringify(response, null, 2)}`);
@@ -137,11 +137,9 @@ export default class Profile extends Component {
 
       try {
         // Update profile photo prop
-        const response = await API.put(
-          'smily-faces',
-          `/users/${this.state.userId}`,
-          { body: { userPhoto: uploadedFile } }
-        );
+        const response = await API.put('smily-faces', `/profile`, {
+          body: { userPhoto: uploadedFile }
+        });
         console.log(`Response: ${JSON.stringify(response, null, 2)}`);
       } catch (e) {
         console.log(`Error: ${JSON.stringify(e, null, 2)}`);

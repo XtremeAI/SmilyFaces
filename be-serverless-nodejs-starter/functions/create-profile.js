@@ -11,7 +11,7 @@ export async function main(event, context, callback) {
     }
 
     const params = {
-        TableName: process.env.profileTableName,
+        TableName: process.env.tableName,
         // 'Item' contains the attributes of the item to be created
         // - 'authorId': user identities are federated through the
         // Cognito Identity Pool, we will use the identity id
@@ -22,6 +22,7 @@ export async function main(event, context, callback) {
         // - 'createdAt': current Unix timestamp
         Item: {
             userId: event.requestContext.identity.cognitoIdentityId,
+            photoId: "Profile",
             userPhoto: null,
             userFaceId: null,
             createdAt: Date.now()
