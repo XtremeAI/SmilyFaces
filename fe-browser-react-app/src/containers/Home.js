@@ -24,10 +24,25 @@ export default class Home extends Component {
   async componentDidMount() {
     if (this.props.isAuthenticated) {
       try {
-        const responseList = await API.get('smily-faces', `/photos`);
-        console.log(
-          `Storage::list(): Response = ${JSON.stringify(responseList, null, 2)}`
+        const listPhotos = await API.get('smily-faces', `/photos`).then(
+          photos =>
+            photos.filter(photo => {
+              return photo.photoId !== 'Profile';
+            })
         );
+        console.log(
+          `Storage::list(): Response = ${JSON.stringify(listPhotos, null, 2)}`
+        );
+
+        const photos = await Promise.all(
+          listPhotos.map(async p => {
+            const photo = p;
+            photo.url = await Storage.get(p.thumbKey.replace('public/', ''));
+            return photo;
+          })
+        );
+        this.setState({ photos });
+
         // let photos = [...responseList].filter(f =>
         //   /\.(gif|jpg|jpeg|tiff|png)$/i.test(f.key)
         // );
@@ -41,7 +56,7 @@ export default class Home extends Component {
         // );
         // this.setState({ photos });
       } catch (e) {
-        console.log(`Storage::list(): Error = ${JSON.stringify(e, null, 2)}`);
+        console.log(`Error = ${e}`);
       }
     }
   }
@@ -65,7 +80,7 @@ export default class Home extends Component {
     if (photos.length > 0) {
       previews = photos.map((photo, index) => {
         return (
-          <Col xs={6} md={4} key={photo.key}>
+          <Col xs={6} md={4} key={photo.photoId}>
             <Row>
               <Thumbnail src={photo.url} alt="50x50">
                 <h5>{photo.key}</h5>
@@ -77,7 +92,7 @@ export default class Home extends Component {
     }
     return (
       <div className="Home-photos">
-        <PageHeader>Your photos</PageHeader>
+        <PageHeader>Photos for Me!</PageHeader>
         <Grid>{previews}</Grid>
         <ListGroup>
           {!this.state.isLoading && this.renderPhotoThumbs(this.state.photos)}

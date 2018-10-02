@@ -18,7 +18,7 @@
                     "arn":"arn:aws:s3:::smilefaces-serverless-svc-dev-photosbucket"
                 },
                 "object":{
-                    "key":"public/uploads/1536314239641-DSC03406.jpg",
+                    "key":"public/uploads/1538478351179-IMG_0207.jpg",
                     "size":713028,
                     "eTag":"40103f43a5709cc4d603e5df31020c94",
                     "sequencer":"005B87E379A1297B25"

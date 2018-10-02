@@ -18,7 +18,7 @@ export async function main (event, context) {
   const bucket = event.Records[0].s3.bucket.name
   const key = decodeURIComponent(keyURL);
 
-  let tags = [];
+  let userIds = [];
 
   const paramsDetectFaces = {
     Image: {
@@ -87,7 +87,12 @@ export async function main (event, context) {
             console.log(JSON.stringify(responseSearchFacesByImageInput));
   
             // TODO: Maybe we need to select the best match in the future
-            tags.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
+            if (responseSearchFacesByImageInput.FaceMatches.length === 0) {
+              console.log(`No faces found for Bounding box: ${JSON.stringify(pixelBox)}`);
+            }
+            else {
+              userIds.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
+            }
           } catch (e) {
             console.log(`Error while searchFacesByImage: ${e}`);
           }
@@ -137,14 +142,14 @@ export async function main (event, context) {
       //       console.log(JSON.stringify(responseSearchFacesByImageInput));
   
       //       // TODO: Maybe we need to select the best match in the future
-      //       tags.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
+      //       userIds.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
       //     } catch (e) {
       //       console.log(`Error while searchFacesByImage: ${e}`);
       //     }
       // }
 
-      console.log(`At the end we matched the phtoto to the following tags:`);
-      console.log(tags);
+      console.log(`At the end we matched the phtoto to the following userIds:`);
+      console.log(userIds);
 
       // Copy photo to processed folder and give it a unique name
       const newPhotoId = uuid.v1();
@@ -182,26 +187,33 @@ export async function main (event, context) {
           console.log(`OK, we create a thumbnail of our photo in '${thumbKey}' and received this response:`);
           console.log(JSON.stringify(responsePutObject));
 
-          const paramsDb = {
-            TableName: process.env.tableName,
-            Item: {
-              photoId: newPhotoId,
-              photoKey: newPhotoKey,
-              thumbKey: thumbKey,
-              tags: tags,
-              createdAt: Date.now()
+          let isRecorded = true;
+
+          for (const userId of userIds) {
+            const paramsDb = {
+              TableName: process.env.tableName,
+              Item: {
+                userId: userId,
+                photoId: newPhotoId,
+                photoKey: newPhotoKey,
+                thumbKey: thumbKey,
+                createdAt: Date.now()
+              }
+            };
+            try {
+              await dynamoDbLib.call("put", paramsDb);
+            } catch(e) {
+              console.log(`Error while creatingDbRecord: ${JSON.stringify(e)}`);
+              isRecorded = false;
             }
-          };
-        
-          try {
-            await dynamoDbLib.call("put", paramsDb);
-            console.log(`All done. Recorded photoId: ${newPhotoId}`);
-  
+          }
+
+          if (isRecorded) {
+            console.log(`All done. Recorded photoId: ${newPhotoKey}`);
             const paramsDelete = {
               Bucket: bucket,
               Key: key
             };
-  
             try {
               const responseDeleteObject = await s3.deleteObject(paramsDelete).promise();
               console.log(`OK, we deleted our uploaded photo '${key}' and received this response:`);
@@ -209,8 +221,6 @@ export async function main (event, context) {
             } catch (e) {
               console.log(`Error while deleteObject: ${e} `);
             }
-          } catch(e) {
-            console.log(`Error while creatingDbRecord: ${JSON.stringify(e)}`);
           }
         } catch (e) {
           console.log(`Error while putObject: ${e} `);
