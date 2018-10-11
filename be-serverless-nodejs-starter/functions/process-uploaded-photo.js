@@ -68,34 +68,35 @@ export async function main (event, context) {
           .extract({
             left: pixelBox.left, 
             top: pixelBox.top, 
-            width: pixelBox.width, 
-            height: pixelBox.height
+            width: pixelBox.width < 80 ? 80 : pixelBox.width, 
+            height: pixelBox.height < 80 ? 80 : pixelBox.height
           })
           .toBuffer();
   
-          try {
-            const paramsSearchFacesByImageInput = {
-              CollectionId: collection, 
-              Image: {
-                Bytes: croppedPhoto
-              }
-            };
-            const responseSearchFacesByImageInput = await rekognition.searchFacesByImage(paramsSearchFacesByImageInput).promise();
-  
-            console.log(`OK, we attempted to search the cropped face in our photo collection '${collection}' and received this response:`);
-  
-            console.log(JSON.stringify(responseSearchFacesByImageInput));
-  
-            // TODO: Maybe we need to select the best match in the future
-            if (responseSearchFacesByImageInput.FaceMatches.length === 0) {
-              console.log(`No faces found for Bounding box: ${JSON.stringify(pixelBox)}`);
+        try {
+          const paramsSearchFacesByImageInput = {
+            CollectionId: collection, 
+            Image: {
+              Bytes: croppedPhoto
             }
-            else {
-              userIds.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
-            }
-          } catch (e) {
-            console.log(`Error while searchFacesByImage: ${e}`);
+          };
+
+          const responseSearchFacesByImageInput = await rekognition.searchFacesByImage(paramsSearchFacesByImageInput).promise();
+
+          console.log(`OK, we attempted to search the cropped face in our photo collection '${collection}' and received this response:`);
+
+          console.log(JSON.stringify(responseSearchFacesByImageInput));
+
+          // TODO: Maybe we need to select the best match in the future
+          if (responseSearchFacesByImageInput.FaceMatches.length === 0) {
+            console.log(`No faces found for Bounding box: ${JSON.stringify(pixelBox)}`);
           }
+          else {
+            userIds.push(responseSearchFacesByImageInput.FaceMatches[0].Face.ExternalImageId);
+          }
+        } catch (e) {
+          console.log(`Error while searchFacesByImage: ${e}`);
+        }
       }
 
       async function searchForFacesInParallel(faces) {
@@ -150,6 +151,8 @@ export async function main (event, context) {
 
       console.log(`At the end we matched the phtoto to the following userIds:`);
       console.log(userIds);
+
+      if (userIds.length === 0) return;
 
       // Copy photo to processed folder and give it a unique name
       const newPhotoId = uuid.v1();
